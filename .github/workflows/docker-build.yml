@@ -10,7 +10,7 @@ permissions:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_TAG: ghcr.io/cordobatech/Infinitetalk_Runpod_hub:latest
+  IMAGE_TAG: ghcr.io/cordobatech/infinitetalk_runpod_hub:latest
 
 jobs:
   build-and-push:
