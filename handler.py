@@ -239,9 +239,22 @@ def get_audio_duration(audio_path):
     """오디오 파일의 길이(초)를 반환"""
     try:
         duration = librosa.get_duration(path=audio_path)
+        logger.info(f"librosa로 측정한 오디오 길이: {duration:.2f}초")
         return duration
     except Exception as e:
-        logger.warning(f"오디오 길이 계산 실패 ({audio_path}): {e}")
+        logger.warning(f"librosa 오디오 길이 계산 실패 ({audio_path}): {e}")
+        try:
+            result = subprocess.run(
+                ["ffprobe", "-v", "error", "-show_entries", "format=duration",
+                 "-of", "default=noprint_wrappers=1:nokey=1", audio_path],
+                capture_output=True, text=True, timeout=15
+            )
+            if result.returncode == 0 and result.stdout.strip():
+                duration = float(result.stdout.strip())
+                logger.info(f"ffprobe로 측정한 오디오 길이: {duration:.2f}초")
+                return duration
+        except Exception as e2:
+            logger.warning(f"ffprobe 오디오 길이 계산 실패: {e2}")
         return None
 
 
